@@ -40,8 +40,8 @@ int _getline(char **buf, size_t *n, int fd)
 		buf_len++;
 		if (buf_len >= *n) 
 		{
-			char *new_buf = realloc(*buf, *n * 2); /* write yoir realloc */
-			if (new_buf == NULL) 
+			char *new_buf = realloc(*buf, *n * 2); /* write your realloc */
+			if (new_buf == NULL)
 				return (-1);
 			*buf = new_buf;
 			*n *= 2;
@@ -90,17 +90,25 @@ char **parse_input(char *user_input)
 	return (user_input_array);
 }
 /**
- * interpret - interprets a command by finding and prepending its path if necessary
- * also handles expansion of special variables
- * @parsed_input: array of arguments to be executed
- * Return: interpreted command
+ * interpret_func - interpretes the tokenized string by separating into
+ * command and arguments and finding its corresponding path and/or 
+ * executable if it exists
+ * @arg_command: array of command-line input in tokenized form
+ * Return: pointer to built-in function if present or NULL
  */
-char **interpret(char **parsed_input)
+char (*interpret_func(char *arg_command))(char **arg)
 {
-	if (!parsed_input || *parsed_input)
-		return (NULL);
-	if (*(parsed_input[0]) == '/' || == '.')
-		expand(parsed_input);
-	else
+	var_func interpreted_command[] = {
+		{"setenv", setenv_func},
+		{NULL, NULL}
+	};
+	int i = 0;
 
+	while (interpreted_command[i].str)
+	{
+		if ((_strcmp(arg_command, interpreted_command[i].str)))
+			return (interpreted_command[i].func_ptr);
+		i++;
+	}
+	return (interpreted_command[i].func_ptr);
 }
