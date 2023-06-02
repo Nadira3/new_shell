@@ -63,7 +63,7 @@ int _getline(char **buf, size_t *n, int fd)
 char **parse_input(char *user_input)
 {
 	char **user_input_array = NULL, *start_to_write = user_input;
-	int i = 0, j, len, flag = 0;
+	int i = 0, j, len;
 
 	user_input_array = malloc(sizeof(char *) * (num_words(user_input) + 1));
 	if (!user_input_array)
@@ -74,13 +74,7 @@ char **parse_input(char *user_input)
 		if (*start_to_write == '\0' || *start_to_write == '#')
 			break;
 		len = wordlen(start_to_write);
-		if (*start_to_write == '$' && *(start_to_write + 1))
-		{
-			flag = 1;
-			user_input_array[i] = malloc(expand(*start_to_write));
-		}
-		else
-			user_input_array[i] = malloc(len + 1);
+		user_input_array[i] = malloc(len + 1);
 		if (!user_input_array[i])
 		{
 			for (j = i; j > 0; j--)
@@ -88,10 +82,7 @@ char **parse_input(char *user_input)
 			free(user_input_array);
 			return (0);
 		}
-		if (!flag)
-			_strcpyp(user_input_array[i], start_to_write);
-		else
-			var_copy(user_input_array[i], *start_to_write);
+		_strcpyp(user_input_array[i], start_to_write);
 		start_to_write += len;
 		i++;
 	}
