@@ -28,5 +28,7 @@ int wordlen(char *str);
 char *_strcpyp(char *str1, char *str2);
 char *_strcat(char *str1, char *str2);
 char **interpret(char **parsed_input);
+char *expand_and_sub(char *input, char *var_name);
+char *input_expand(char *user_input);
 #endif
 
