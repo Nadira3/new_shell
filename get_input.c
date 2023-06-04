@@ -11,6 +11,12 @@ char *read_input(ssize_t *input_len, int fd)
 	ssize_t len = 0;
 
 	len = _getline(&buf, &n, fd);
+	/*if (len == -1)
+	{
+		free(buf);
+		exit_status = 2;
+		exit(EXIT_FAILURE);
+	}*/
 	*input_len = len > 0 ? len : 0;
 	return (len == -1 ? NULL : buf);
 }
@@ -24,7 +30,7 @@ char *read_input(ssize_t *input_len, int fd)
 int _getline(char **buf, size_t *n, int fd)
 {
 	ssize_t bytes_read = 0;
-	ssize_t buf_len = 0;
+	size_t buf_len = 0;
 	int read_len = 0;;
 
 	if (*buf == NULL || *n == 0)
@@ -34,7 +40,7 @@ int _getline(char **buf, size_t *n, int fd)
 			return (-1);
 		*n = BUFSIZE;
 	}
-	while (read_len = read(fd, *buf + buf_len, 1))
+	while ((read_len = read(fd, *buf + buf_len, 1)))
 	{
 		bytes_read += read_len;
 		buf_len++;
@@ -95,13 +101,13 @@ char **parse_input(char *user_input)
  * executable if it exists
  * @arg_command: array of command-line input in tokenized form
  * Return: pointer to built-in function if present or NULL
- *
+ */
 char (*interpret_func(char *arg_command))(char **arg)
 {
 	var_func interpreted_command[] = {
-		{"env", tenv_func},
+		/*{"env", tenv_func},
 		{"setenv", setenv_func},
-		{"unsetenv", unsetenv_func},
+		{"unsetenv", unsetenv_func},*/
 		{NULL, NULL}
 	};
 	int i = 0;
@@ -113,4 +119,34 @@ char (*interpret_func(char *arg_command))(char **arg)
 		i++;
 	}
 	return (interpreted_command[i].func_ptr);
-}*/
+}
+void exit_func(int status)
+{
+	return;
+}
+char *interpret(char **arg, int exit_status)
+{
+	char *filepath = NULL, *command = NULL;
+
+	if (!arg || !*arg)
+		return (0);
+	command = arg[0];
+	if (*command == '/' || *command == '.')
+		filepath = access(command, F_OK | X_OK) != 0 ? NULL : _strdup(command);
+	else
+		filepath = path(command);
+	/* check if they are executable */
+	if (!filepath)
+	{
+		_puts(arg[0]);
+		_puts(": command not found\n");
+		return (0);
+	}
+	if (access(filepath, F_OK | X_OK) != 0 && !(interpret_func(command)))
+	{
+		perror(command);
+		exit_status = EXIT_FAILURE;
+		exit_func(exit_status);
+	}
+	return (filepath);
+}

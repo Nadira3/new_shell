@@ -51,7 +51,7 @@ char *_strcpy(char *str1, char *str2)
 	}
 	*ptr1 = '\0';
 	return (str1);
-	
+
 }
 /**
  * _strtok - tokenizes a string
@@ -97,4 +97,25 @@ char *_strtok(char *str, char *delim)
 
 	ptr = (i < str_len) ? &str[i + 1] : NULL;
 	return str;
+}
+/**
+ * _strcmp - compares to string to check if they are an exact match
+ * @str1: first string
+ * @str2: second string
+ * Return: 1 if strings match, otherwise 0
+ */
+int _strcmp(char *str1, char *str2)
+{
+	char *ptr1 = str1, *ptr2 = str2;
+
+	if (!ptr1 || !ptr2)
+		return (0);
+	while (*ptr1 || *ptr2)
+	{
+		if (*ptr2 != *ptr1)
+			return (0);
+		ptr1++;
+		ptr2++;
+	}
+	return (1);
 }

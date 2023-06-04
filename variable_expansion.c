@@ -1,6 +1,5 @@
 #include "shell.h"
 #include <ctype.h>
-int exit_status = 0;
 int num_len(int n)
 {
 	int len = 0;
@@ -63,7 +62,7 @@ char *var_name_extract(char *input)
 	}
 	return (i ? var_name : NULL);
 }
-char *lookup_variable(char *var_name)
+char *lookup_variable(char *var_name, int exit_status)
 {
 	char *value = NULL;
 	char *token;
@@ -88,12 +87,12 @@ char *lookup_variable(char *var_name)
 			value = string(exit_status, num_len(exit_status));
 			break;
 		default:
-			value = getenv(token);
+			value = _getenv(token);
 	}
 	free(var_copy);
 	return (value);
 }
-char *expand_and_sub(char *input, char *var_name)
+char *expand_and_sub(char *input, char *var_name, int exit_status)
 {
 	char *name_copy = NULL;
 	char *new_input = NULL;
@@ -119,7 +118,7 @@ char *expand_and_sub(char *input, char *var_name)
 			i++;
 		}
 		new_input[i] = '\0';
-		value = lookup_variable(name_copy);
+		value = lookup_variable(name_copy, exit_status);
 		name_copy = _strtok(NULL, "/:");
 		if (name_copy == NULL)
 			break;
@@ -133,20 +132,20 @@ char *expand_and_sub(char *input, char *var_name)
 			new_input[i] = '\0';
 		}
 	}
-	if (!value)
+	/*if (!value)
 		putchar(10);
 	free(value);
-	/*free(input);*/
+	free(input);*/
 	return (new_input);
 }
-char *input_expand(char *user_input)
+char *input_expand(char *user_input, int exit_status)
 {
 	char *expanded_input, *var_name;
 
 	if (!user_input)
 		return (0);
 	var_name = var_name_extract(user_input);
-	user_input = expand_and_sub(user_input, var_name);
+	user_input = expand_and_sub(user_input, var_name, exit_status);
 	return (user_input);
 }
 /*
