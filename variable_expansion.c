@@ -60,14 +60,16 @@ char *var_name_extract(char *input)
 		post++;
 		ptr++;
 	}
+	if (!i)
+		free(var_name);
 	return (i ? var_name : NULL);
 }
 char *lookup_variable(char *var_name, int exit_status)
 {
-	char *value = NULL;
-	char *token;
+	char *value = NULL, *token = NULL, *var_copy = NULL;
+	pid_t mpid;
 
-	char *var_copy = strdup(var_name);
+	var_copy = strdup(var_name);
 	if (var_copy == NULL)
 		return (NULL);
 
@@ -80,8 +82,8 @@ char *lookup_variable(char *var_name, int exit_status)
 	switch (*var_name)
 	{
 		case '$':
-			int mpid = getpid();
-			value = string(mpid, num_len(mpid));
+			mpid = getpid();
+			value = string(mpid, num_len((int)mpid));
 			break;
 		case '?':
 			value = string(exit_status, num_len(exit_status));
@@ -94,10 +96,8 @@ char *lookup_variable(char *var_name, int exit_status)
 }
 char *expand_and_sub(char *input, char *var_name, int exit_status)
 {
-	char *name_copy = NULL;
-	char *new_input = NULL;
-	char *value = NULL;
-	int var_post, i = 0;
+	char *name_copy = NULL, *new_input = NULL, *value = NULL;
+	int i = 0;
 
 	if (!var_name)
 		return input;
@@ -122,8 +122,6 @@ char *expand_and_sub(char *input, char *var_name, int exit_status)
 		name_copy = _strtok(NULL, "/:");
 		if (name_copy == NULL)
 			break;
-		var_post = atoi(name_copy);
-
 		if (value)
 		{
 			int j = 0;
@@ -140,12 +138,13 @@ char *expand_and_sub(char *input, char *var_name, int exit_status)
 }
 char *input_expand(char *user_input, int exit_status)
 {
-	char *expanded_input, *var_name;
+	char *var_name;
 
 	if (!user_input)
 		return (0);
 	var_name = var_name_extract(user_input);
 	user_input = expand_and_sub(user_input, var_name, exit_status);
+	free(var_name);
 	return (user_input);
 }
 /*

@@ -19,7 +19,7 @@ typedef struct var
 } var_func;
 char *read_input(ssize_t *, int);
 int _getline(char **, size_t *, int);
-void print_prompt(int);
+void print_prompt(int, int);
 int _putchar(char);
 int _puts(char *);
 char **parse_input(char *);
@@ -39,5 +39,6 @@ char *interpret(char **, int);
 char *input_expand(char *, int);
 char *path(char *);
 int execute(char *, char **, int *, char **);
+void free_func(char *, char **, char *);
 #endif
 

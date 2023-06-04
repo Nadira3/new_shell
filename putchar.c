@@ -19,10 +19,10 @@ int _putchar(char c)
 	n = write(1, &c, 1);
 	return (n == -1 ? 0 : 1);
 }
-void print_prompt(int term)
+void print_prompt(int term, int fd)
 {
 	char *prompt = "$ ";
 
-	if (term)
+	if (term && !fd)
 		_puts(prompt);
 }
