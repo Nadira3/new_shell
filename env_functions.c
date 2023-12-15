@@ -71,3 +71,18 @@ char *path(char *command)
 	free(filepath);
 	return (env_path);
 }
+
+void free_func(char *a, char **c, char *b)
+{
+	if (a)
+		free(a);
+	if (b)
+		free(b);
+	if (c)
+	{
+		int i;
+		for (i = 0; c[i]; i++)
+			free(c[i]);
+		free(c);
+	}
+}

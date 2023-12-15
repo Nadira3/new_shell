@@ -60,6 +60,7 @@ int _getline(char **buf, size_t *n, int fd)
 	}
 	if (read_len == -1 || (!read_len && !bytes_read))
 		return (-1);
+	return (1);
 }
 /**
  * parse_input - tokenizes a string
